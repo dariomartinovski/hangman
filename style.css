@@ -1,0 +1,161 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    background: linear-gradient(90deg, rgba(146,208,153,1), rgba(82,154,106,1));
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#hangmanGame{
+    display: grid;
+}
+.roof{
+    justify-self: flex-end;
+    height: 1rem;
+    width: 8rem;
+    background-color: white;
+}
+.extention{
+    margin-top: 1rem;
+    height: 2rem;
+    width: 1rem;
+    background-color: white;
+}
+.pillar{
+    justify-self: flex-end;
+    height: 20rem;
+    width: 1rem;
+    background-color: white;
+}
+.base{
+    height: 1rem;
+    width: 15rem;
+    background-color: white;
+}
+.head{
+    margin-left: -0.75rem;
+    height: 2.5rem;
+    width: 2.5rem;
+    border: 0.5rem solid black;
+    background-color: transparent;
+    border-radius: 50%;
+}
+.body{
+    margin-left: 0.25rem;
+    margin-top: -0.1rem;
+    position: relative;
+    height: 8rem;
+    width: 0.5rem;
+    background-color: black;
+}
+.lefthand, .righthand, .leftleg, .rightleg{
+    position: absolute;
+    height: 0.5rem;
+    width: 3rem;
+    background-color: black;
+}
+.lefthand{
+    transform: rotate(45deg);
+    top: 1rem;
+    left: -2.35rem;
+}
+.righthand{
+    transform: rotate(-45deg);
+    top: 1rem;
+    left: -0.15rem;
+}
+.leftleg{
+    transform: rotate(-45deg);
+    top: 8.5rem;
+    left: -2.35rem;
+}
+.rightleg{
+    transform: rotate(45deg);
+    left: -0.15rem;
+    top: 8.5rem;
+}
+.answer{
+    justify-self: center;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    display: flex;
+    height: 2.5rem;
+    align-items: flex-end;
+}
+.line{
+    text-align: center;
+    margin: 1rem 0.5rem 0;
+}
+.line::after{
+    content: '';
+    display: block;
+    width: 1.5rem;
+    border-bottom: 0.15rem solid black;
+}
+.buttonsContainer{
+    margin-left: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.keyboard{
+    display: grid;
+    grid-template-columns: repeat(5,3rem);
+    grid-template-rows: repeat(6,2.2rem);
+}
+.keyboard>button:last-child{
+    grid-column: 3/4;
+}
+button{
+    border-radius: 0.5rem;
+    border: 0.05rem solid black;
+    background-color: rgba(250,250,250,0.1);
+    backdrop-filter: blur(0.2rem);
+    transition: all 200ms ease;
+}
+.letter{
+    margin: 0.1rem;
+}
+.newGame{
+    width: 10rem;
+    margin-top: 2rem;
+    padding: 0.5rem;
+}
+.wrong{
+    background-color: red;
+}
+.correct{
+    background-color: green;
+}
+.freeze{
+    pointer-events: none;
+}
+@media only screen and (min-width: 560px){
+    button:hover{
+        background-color: rgba(250,250,250,0.5);
+    }
+}
+@media only screen and (max-width: 560px){
+    html{
+        font-size: 13px;
+    }
+    body{
+        flex-direction: column;
+    }
+    #hangmanGame{
+        margin-top: 2rem;
+    }
+    .buttonsContainer{
+        margin: 2rem 0;
+    }
+    .letter{
+        margin: 0.13rem;
+    }
+    .newGame{
+        margin-top: 1rem;
+    }
+}
