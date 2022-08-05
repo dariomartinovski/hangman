@@ -5758,10 +5758,16 @@ const fiveLetterWords = [
     "pupal",
 ];
 
-let word, mistakes = 0, empty=0;
+let word, mistakes = 0, empty=0, noHints=0, NoGames=0;
+let points = [];
+const maxPoints = 10;
 const keyboard = document.querySelector(".keyboard"),
       answer = document.querySelector(".answer"),
-      newGameBtn = document.querySelector(".newGame");
+      newGameBtn = document.querySelector(".newGame"),
+      nextGameBtn = document.querySelector(".nextGame"),
+      messageBox = document.querySelector(".message"),
+      oneLetterHintBtn = document.querySelector(".oneLetterHint"),
+      fiveLetterHintBtn = document.querySelector(".crossFiveLetters");
 const stickman = [
     head = document.querySelector(".head"),
     body = document.querySelector(".body"),
@@ -5793,13 +5799,12 @@ letterBtn.forEach(item => {
                 item.classList.add("wrong"); //changes the background color of the buttton to red
                 if(mistakes===6){ // endGame if mistakes === 6
                     endGame();
-                    setTimeout(()=>{alert("The word was "+ word +" better luck next time")},0)
+                    messageBox.textContent = "The word was "+ word +", better luck next time";
+                    messageBox.classList.add("toggleMessage");
+                    setTimeout(()=>{messageBox.classList.remove("toggleMessage")},2500)    
                 }
             }
-            if(checkWin()){ //checkwin on every inputed letter
-                endGame();
-                setTimeout(()=>{alert("Cognrats, you win congrats")},0);
-            }
+            checkWin();
         }
     })
 })
@@ -5807,6 +5812,19 @@ letterBtn.forEach(item => {
 newGameBtn.addEventListener("click",e => {
     newGame();
 })
+
+nextGameBtn.addEventListener("click", e=>{
+    nextGame();
+})
+
+oneLetterHintBtn.addEventListener("click",e => {
+    oneLetterHint();
+})
+
+fiveLetterHintBtn.addEventListener("click",e => {
+    fiveLetterHint();
+})
+
 
 function startGame(){
     for(let i=0;i<26;i++){
@@ -5823,6 +5841,8 @@ function startGame(){
     word = generateWord();
     console.log(word);
     hideStickman();
+    nextGameBtn.classList.add("freeze");
+    nextGameBtn.classList.add("lowerOpacity");
 }
 
 function generateWord(){
@@ -5842,21 +5862,63 @@ function checkWin(){
             empty++;
         }
     })
-    // return empty===0? true : false;
     if(empty!==0){
         empty=0;
-        return false;
     }
-    return true;
+    else{
+        endGame();
+        messageBox.textContent = "Congrats, you win!!!";
+        messageBox.classList.add("toggleMessage");
+        setTimeout(()=>{messageBox.classList.remove("toggleMessage")},2500);
+        nextGameBtn.classList.remove("lowerOpacity");
+        nextGameBtn.classList.remove("freeze");
+    }
 }
 
 function endGame(){
     letterBtn.forEach(item => {
         item.classList.add("freeze");
     })
+    oneLetterHintBtn.classList.add("freeze");
+    fiveLetterHintBtn.classList.add("freeze");
 }
 
 function newGame(){
+    partialNewGame();
+    messageBox.classList.remove("toggleMessage");
+    nextGameBtn.textContent = "Next game";
+    noHints=0;
+    NoGames=0;
+    oneLetterHintBtn.classList.remove("lowerOpacity");
+    fiveLetterHintBtn.classList.remove("lowerOpacity");
+    oneLetterHintBtn.classList.remove("freeze");
+    fiveLetterHintBtn.classList.remove("freeze");
+    nextGameBtn.classList.add("freeze");
+    nextGameBtn.classList.add("lowerOpacity");
+}
+
+function nextGame(){
+    points[NoGames++]= maxPoints - mistakes;
+    if(NoGames===3){
+        let sum = points.reduce((acc,val)=>{
+            return acc+val;
+        },0);
+        setTimeout(()=>{
+            messageBox.textContent = "You're have "+sum+" points, congrats!";
+            messageBox.classList.add("toggleMessage");
+        },2000);
+        nextGameBtn.classList.add("freeze");
+        nextGameBtn.classList.add("lowerOpacity");
+        endGame();
+    }
+    else
+        partialNewGame();
+    if(NoGames==2){
+        nextGameBtn.textContent = "Finish game";
+    }
+}
+
+function partialNewGame(){
     word = generateWord();
     mistakes=0;
     hideStickman();
@@ -5868,5 +5930,49 @@ function newGame(){
     spaces.forEach(item => {
         item.textContent="";
     })
-    // console.log(word);
+    console.log(word);
+    if(!oneLetterHintBtn.classList.contains("lowerOpacity"))
+        oneLetterHintBtn.classList.remove("freeze");
+    if(!fiveLetterHintBtn.classList.contains("lowerOpacity"))
+        fiveLetterHintBtn.classList.remove("freeze");
+    
+}
+
+function oneLetterHint(){
+    oneLetterHintBtn.classList.add("freeze");
+    for(let i=0;i<5;i++){
+        if(spaces[i].textContent===""){
+            for(let j=0;j<5;j++){
+                if(word[i] === word[j]){ //checking if there are more same letters in the word, because include finds the first, same indexOf()
+                    spaces[j].textContent = word[i]; 
+                    letterBtn[word[j].charCodeAt(0)-65].classList.add("correct");
+                }
+            }
+            break;
+        }
+    }
+    oneLetterHintBtn.classList.add("lowerOpacity");
+    checkWin();
+}
+
+function fiveLetterHint(){
+    let isCorrectLetter = false;
+    fiveLetterHintBtn.classList.add("freeze");
+    while(noHints!==5){
+        let indx = Math.floor(Math.random()*26);
+        if(!letterBtn[indx].classList.contains("wrong") && !letterBtn[indx].classList.contains("correct")){
+            for(let i=0;i<5;i++){
+                if(word[i]===letterBtn[indx].innerHTML){
+                    isCorrectLetter=true;
+                    break;
+                }
+            }
+            if(!isCorrectLetter){
+                letterBtn[indx].classList.add("wrong");
+                noHints++;
+            }
+            isCorrectLetter=false;
+        }
+    }
+    fiveLetterHintBtn.classList.add("lowerOpacity");
 }
